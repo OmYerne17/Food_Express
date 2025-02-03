@@ -24,7 +24,7 @@ function RestaurantSignUp() {
       setError(true);
       return;
     }}
-    console.log(email, password, Address, city, mobile);
+
     let result = await fetch("http://localhost:3000/api/restaurant" ,{
       method:"POST",
       headers: {

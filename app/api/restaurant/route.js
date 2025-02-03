@@ -8,6 +8,7 @@ export async function GET() {
       await mongoose.connect(connectionStr, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        serverSelectionTimeoutMS: 5000,
       });
     const data = await Restaurant.find();
     console.log(data);
@@ -22,6 +23,7 @@ export async function POST(request) {
   await mongoose.connect(connectionStr, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000,
   });
   if(payload.login){
       result = await Restaurant.findOne({email:payload.email , password:payload.password});
@@ -40,8 +42,8 @@ export async function POST(request) {
 return NextResponse.json({ result, success });
 
 } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("MongoDB connection error:", error);
+    return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
   }
   
 }

@@ -8,7 +8,20 @@ export default {
   ],
   theme: {
   	extend: {
+		fontFamily: {
+			sans: [
+			  '-apple-system', // Apple system font
+			  'BlinkMacSystemFont', // Fallback for macOS
+			  '"Segoe UI"', // Windows font
+			  'Roboto', // Android font
+			  '"Helvetica Neue"', // Older macOS
+			  'Arial', // General fallback
+			  'sans-serif', // Default sans-serif
+			],
+		  },
   		colors: {
+		
+			'custom-red': '#ed3136', // Your custom color
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

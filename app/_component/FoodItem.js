@@ -103,12 +103,13 @@ export const FoodItem = () => {
               <td>{item.description}</td>
               <td><img className="w-24 p-0" src={item.image} alt={item.name}/></td>
               <td>
-                <button 
+                <Button 
+                  variant="outline"
                   onClick={() => handleDelete(item._id)} 
-                  className="border-2 rounded-md bg-slate-200 mr-2"
+                  className="border-2 rounded-md mr-2"
                 >
                   Delete
-                </button>
+                </Button>
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button variant="outline">Edit</Button>

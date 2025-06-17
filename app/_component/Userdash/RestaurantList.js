@@ -1,7 +1,7 @@
 import Image from "next/image"
 import { Star } from "lucide-react"
-import { restaurants } from "@/lib/data"
-import { Card, CardContent } from "@/components/ui/card"
+import { restaurants } from "../../../lib/data"
+import { Card, CardContent } from "../../../components/ui/card"
 
 export function RestaurantList() {
 

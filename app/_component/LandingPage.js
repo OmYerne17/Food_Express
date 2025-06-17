@@ -3,7 +3,7 @@ import NavCards from "./NavCards";
 import DynamicCard from "./DynamicCard";
 import ShopGroceries from "./ShopGroceries";
 import LandFooter from "./LandFooter";
-import UserDashHeader from "./UserDashHeader";
+import LandingHeader from "./Userdash/LandingHeader";
 
 const data = [
   {
@@ -96,37 +96,36 @@ const footer =[ {
   ],
 },]
 export default function LandingPage() {
-
   return (
     <>
-      <div className="">
-        <div className="relative h-[650px]">
+      <div className="w-full">
+        <div className="relative h-[400px] md:h-[500px] lg:h-[650px]">
           <img
             src="https://wallpaperaccess.com/full/825322.jpg"
             alt="Landing Page Image"
             className="w-full h-full object-cover"
           />
-          <div className=" absolute top-0 z-10 w-full  ">
-            <UserDashHeader />
-            </div>
+          <div className="absolute top-0 left-0 right-0 z-20">
+            <LandingHeader />
+          </div>
           
-          <div className="absolute inset-0 bg-zinc-700 bg-opacity-30 flex flex-col justify-center items-center text-white">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">
+          <div className="absolute inset-0 bg-zinc-700 bg-opacity-30 flex flex-col justify-center items-center text-white px-4 pt-20">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 md:mb-4 text-center">
               Food Delivery
             </h1>
-            <p className="text-xl md:text-2xl mb-8">
+            <p className="text-lg sm:text-xl md:text-2xl mb-4 md:mb-8 text-center max-w-2xl">
               Order your favorite food from the best restaurants
             </p>
-            <div className="space-x-4">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-4 justify-center items-center">
               <button
                 onClick={() => (window.location.href = "/restaurant")}
-                className="bg-white text-black px-6 py-2 rounded-full hover:bg-gray-100"
+                className="w-full sm:w-auto bg-white text-black px-6 py-2 rounded-full hover:bg-gray-100 transition-colors duration-300"
               >
                 Restaurant Login
               </button>
               <button
-                className="bg-transparent border-2 border-white text-white px-6 py-2 rounded-full hover:bg-white hover:text-black"
-                onClick={() => (window.location.href = "/user")}
+                className="w-full sm:w-auto bg-transparent border-2 border-white text-white px-6 py-2 rounded-full hover:bg-white hover:text-black transition-colors duration-300"
+                onClick={() => (window.location.href = "/user/dashboard")}
               >
                 Order Now
               </button>
@@ -134,26 +133,27 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
-      <div>
-        <div className=" flex justify-center items-center">
+      <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12">
+        <div className="flex justify-center items-center py-8">
           <NavCards />
         </div>
-       <div>
-        <DynamicCard data ={data}/>
-       </div>
-       <div>
-        <ShopGroceries/>
-       </div>
-       <div>
-        <DynamicCard  data = {data2}/>
-       </div>
-       <div className="bg-black">
-       <LandFooter data ={footer}/>
-       <br></br>
-       <LandFooter data={footer}/>
-       </div>
+        <div className="py-8">
+          <DynamicCard data={data}/>
+        </div>
+        <div className="py-8">
+          <ShopGroceries/>
+        </div>
+        <div className="py-8">
+          <DynamicCard data={data2}/>
+        </div>
+        <div className="bg-black">
+          <div className="px-4 sm:px-6 md:px-8 lg:px-12">
+            <LandFooter data={footer}/>
+            <br />
+            <LandFooter data={footer}/>
+          </div>
+        </div>
       </div>
-        
     </>
   );
 }

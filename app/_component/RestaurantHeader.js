@@ -1,50 +1,88 @@
-'use client'
+"use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Search, LogOut } from "lucide-react";
+import Link from "next/link";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 
 function RestaurantHeader() {
-   const [details,setDetails] = useState();
-   let router = useRouter();
-   
-   const navigateByimg = ()=>{
-    router.push("./")
-   }
+  const randomAvatarUrl = `https://api.dicebear.com/6.x/bottts/svg?seed=${Math.random().toString(5).substring(0)}`;
+  const [details, setDetails] = useState();
+  let router = useRouter();
 
- useEffect(() => {
-   let data = localStorage.getItem("RestaurantUser");
-  if(!data){
-    router.push("/") || router.push("/restaurant");
-  } 
-  else{
+  const navigateByimg = () => {
+    router.push("./");
+  };
+
+  useEffect(() => {
+    let data = localStorage.getItem("RestaurantUser");
+    if (!data) {
+      router.push("/") || router.push("/restaurant");
+    } else {
       setDetails(JSON.parse(data));
-      router.push("/restaurant/dashboard")
-  }
- } ,[])
+      router.push("/restaurant/dashboard");
+    }
+  }, []);
   return (
     <>
-    <div className=" flex justify-between h-[4.75rem] bg-white">
-      <img
-        src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.-80uB7Mvxvu8Vzfwhl3DhwHaHa%26pid%3DApi&f=1&ipt=e011b5194b45aaf1c40425f7ea86f74b4595ee5b95de4361e5efd1dd6f64e002&ipo=images"
-        alt="Restaurant Logo"
-        className="w-24"
-        onClick={navigateByimg}
-
-      />
-      <ul className=" flex justify-evenly gap-3 p-5 w-[250px]"> 
-        <li> <button onClick={()=>{(window.location.href = "/")}}>Home </button> </li>
-         {
-          details &&  details.result ? <li> <button onClick={() => { localStorage.removeItem("RestaurantUser"); router.push("/restaurant") }}>Logout</button> </li> :<li> Login </li>
-           }
-        {
-          details && <li className="bg-zinc-600 rounded-full p-[12px] flex items-center justify-center text-white text-lg"> {details.result.email.charAt(0).toUpperCase()} </li>
-        }{
-          !details && <li><button onClick={() => { }}>SignUp</button></li>
-        }{
-        }
-
-      </ul>
-    </div>
-      <div className="w-full h-[1px] bg-zinc-600"></div>
+      <header className="border-b w-full">
+        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between py-4 gap-4 md:gap-0 px-2">
+          <Link href="/" className="text-2xl font-bold text-orange-500 flex-shrink-0">
+            FoodieExpress
+          </Link>
+          <div className="flex w-full md:w-1/3 items-center gap-2">
+            <Input
+              type="search"
+              placeholder="Search for food or restaurants"
+              className="rounded-r-none bg-white text-black flex-1 min-w-0"
+            />
+            <Button
+              type="submit"
+              size="icon"
+              className="rounded-l-none bg-[#BF8404] hover:bg-[#9e6c00]"
+            >
+              <Search className="h-4 w-4" />
+              <span className="sr-only">Search</span>
+            </Button>
+          </div>
+          <div className="space-x-4 flex items-center">
+            {details ? (
+              <div className="p-0 md:p-5">
+                <ul className="flex gap-4 md:gap-7 items-center">
+                  <li className="mt-[-10px]">
+                    <Avatar>
+                      <AvatarImage src={randomAvatarUrl} />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        localStorage.removeItem("RestaurantUser");
+                        router.push("/restaurant");
+                      }}
+                    >
+                      <LogOut />
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              <>
+                <Button
+                  onClick={() => (window.location.href = "/restaurant")}
+                  variant="outline"
+                >
+                  Login
+                </Button>
+                <Button onClick={() => (window.location.href = "restaurant/signup")}>Sign up</Button>
+              </>
+            )}
+          </div>
+        </div>
+      </header>
     </>
   );
 }

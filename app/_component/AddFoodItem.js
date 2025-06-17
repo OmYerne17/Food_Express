@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 const AddFoodItem = ({ setRender, render }) => {
   const [name, setName] = useState("");
@@ -43,46 +55,49 @@ const AddFoodItem = ({ setRender, render }) => {
 
   return (
     <div
-      className="flex flex-col justify-center items-center"
-      style={{
-        backgroundImage: "url('https://via.placeholder.com/1920x1080')", // Test with a placeholder image
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        height: "100vh",
-        width: "100%",
-      }}
-    >
-      <h1 className="text-xl font-bold">Add Food Item</h1>
-      <input
-        type="text"
-        placeholder="Food Item Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Food Item Price"
-        value={price}
-        onChange={(e) => setPrice(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Food Item Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Food Item Image"
-        value={image}
-        onChange={(e) => setImage(e.target.value)}
-      />
-      <div>
-        <button onClick={handleAddFoodItem} className="button-input">
-          ADD Item
-        </button>
-      </div>
+      className="flex flex-col justify-center items-center">
+      <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline">Add Food Item</Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Add Food Item</DialogTitle>
+                      <DialogDescription>
+                        Make changes to your profile here. Click save when you're done.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="name" className="text-right">
+                          Name
+                        </Label>
+                        <Input id="name" className="col-span-3"  onChange ={(e)=>{setName(e.target.value)}}/>
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="price" className="text-right">
+                          Price
+                        </Label>
+                        <Input id="price" className="col-span-3"  onChange ={(e)=>{setPrice(e.target.value)}}/>
+                      </div> 
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="description" className="text-right">
+                          Description
+                        </Label>
+                        <Input id="description" className="col-span-3"  onChange ={(e)=>{setDescription(e.target.value)}}/>
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="image" className="text-right">
+                          Image
+                        </Label>
+                        <Input id="image" className="col-span-3"  onChange ={(e)=>{setImage(e.target.value)}}/>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button onClick={() => handleAddFoodItem()}>Save changes</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
     </div>
   );
 };

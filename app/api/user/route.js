@@ -1,7 +1,7 @@
-import { connectionStr } from "@/app/lib/db";
+import { connectionStr } from "../../lib/db";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
-import { UserModel } from "@/app/lib/UserModel";
+import { UserModel } from "../../lib/UserModel";
 
 export async function GET() {
   try {

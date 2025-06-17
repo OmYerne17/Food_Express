@@ -25,12 +25,24 @@ export function LoginForm() {
     setError("")
 
     try {
-      // Add your login logic here
-      console.log("Login attempt with:", formData)
-      // If login successful, redirect to dashboard
-      router.push("/dashboard")
+      const response = await fetch("/api/user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          login: true
+        })
+      });
+      const data = await response.json();
+      if (data.success && data.result) {
+        localStorage.setItem("User", JSON.stringify(data.result));
+        router.push("/user/dashboard");
+      } else {
+        setError(data.error || "Invalid email or password");
+      }
     } catch (err) {
-      setError("Invalid email or password")
+      setError("Something went wrong. Please try again.");
     }
   }
 

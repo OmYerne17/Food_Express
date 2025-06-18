@@ -9,6 +9,7 @@ import { Button } from "../../components/ui/button"
 import { Input } from "../../components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 
+
 function UserDashHeader({ onSearch }) {
   const [details, setDetails] = useState()
   const [searchQuery, setSearchQuery] = useState("")
@@ -24,9 +25,15 @@ function UserDashHeader({ onSearch }) {
   }
 
   const loadlocations = async () => {
-    const response = await fetch("http://localhost:3000/api/user/locations");
-    const result = await response.json();
-    SetLocations(result.result)
+    try {
+      // Use relative URL for API calls - this works for both local and deployed
+      const response = await fetch('/api/user/locations');
+      const result = await response.json();
+      SetLocations(result.result)
+    } catch (error) {
+      console.error('Error loading locations:', error);
+      SetLocations([]);
+    }
   }
 
   const handleSignOut = () => {

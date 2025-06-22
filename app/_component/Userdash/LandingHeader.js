@@ -21,9 +21,12 @@ function LandingHeader() {
     };
   
     useEffect(() => {
-      let data = localStorage.getItem("RestaurantUser");
+      let data = localStorage.getItem("User");
       if (!data) {
         router.push("/");
+      }else{
+        const parsed = JSON.parse(data);
+      setDetails(parsed)
       }
     }, []);
 
@@ -34,22 +37,6 @@ function LandingHeader() {
             <Link href="/" className="text-xl md:text-2xl font-bold text-orange-500">
               FoodieExpress
             </Link>
-            
-            <div className="hidden md:flex w-1/3 items-center">
-              <Input
-                type="search"
-                placeholder="Search for food or restaurants"
-                className="rounded-r-none bg-white text-black"
-              />
-              <Button
-                type="submit"
-                size="icon"
-                className="rounded-l-none bg-[#BF8404] hover:bg-[#9e6c00]"
-              >
-                <Search className="h-4 w-4" />
-                <span className="sr-only">Search</span>
-              </Button>
-            </div>
             
             {details ? (
               <div className="flex items-center gap-4">

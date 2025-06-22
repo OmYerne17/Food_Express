@@ -30,7 +30,7 @@ export function LoginForm({ className, ...props }) {
       setError(null);
     }
 
-    let result = await fetch("http://localhost:3000/api/user", {
+    let result = await fetch("/api/user", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

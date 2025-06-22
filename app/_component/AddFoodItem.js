@@ -34,7 +34,7 @@ const AddFoodItem = ({ setRender, render }) => {
     }
     console.log(resto_id, "Resto ID");
 
-    const response = await fetch("http://localhost:3000/api/restaurant/foods", {
+    const response = await fetch("/api/restaurant/foods", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

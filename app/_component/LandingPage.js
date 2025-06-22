@@ -146,13 +146,9 @@ export default function LandingPage() {
         <div className="py-8">
           <DynamicCard data={data2}/>
         </div>
-        <div className="bg-black">
-          <div className="px-4 sm:px-6 md:px-8 lg:px-12">
+    
             <LandFooter data={footer}/>
             <br />
-            <LandFooter data={footer}/>
-          </div>
-        </div>
       </div>
     </>
   );

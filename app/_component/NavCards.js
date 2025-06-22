@@ -16,14 +16,14 @@ function NavCards() {
       description: "As a delivery driver, make money and work on your schedule. Sign up in minutes.",
       image: "https://cdn.doordash.com/media/consumer/home/landing/new/Storefront.svg",
       buttonText: "SignUp for free",
-      buttonLink: "http://localhost:3000/restaurant"
+      buttonLink: "/restaurant"
     },
     {
       title: "Get the best DoorDash experience",
       description: "As a delivery driver, make money and work on your schedule. Sign up in minutes.",
       image: "https://cdn.doordash.com/media/consumer/home/landing/new/iphone.svg",
       buttonText: "Get the app",
-      buttonLink: "https://apps.apple.com/us/app/doordash-food-delivery/id1299688604"
+      buttonLink: "#"
     }
   ]
   return (

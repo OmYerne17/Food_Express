@@ -5,23 +5,22 @@ import Order from '../../../models/Order';
 export async function GET(request) {
     try {
         await connectDB();
-        
         // Get user ID from request headers
         const userId = request.headers.get('user-id');
+        console.log("this is user id ",userId)
         
-        // If no user ID provided, return error
         if (!userId) {
             return NextResponse.json(
-                { success: false, error: 'User ID is required' },
-                { status: 400 }
+                { success: false, userId },
+                { status: 400 },
             );
         }
 
-        // Find orders for specific user
+        // Fetch orders for the user, sorted by newest first
         const orders = await Order.find({ user: userId }).sort({ createdAt: -1 });
         return NextResponse.json({ success: true, orders });
     } catch (error) {
-        console.error('Error in GET /api/orders:', error);
+        console.error('Error fetching orders:', error);
         return NextResponse.json(
             { success: false, error: error.message || 'Failed to fetch orders' },
             { status: 500 }

@@ -33,7 +33,8 @@ function OrdersPage() {
             }
             
             const user = JSON.parse(userData);
-            const response = await fetch('http://localhost:3000/api/orders', {
+            console.log(user._id);
+            const response = await fetch('/api/orders', {
                 headers: {
                     'user-id': user._id
                 }

@@ -101,10 +101,6 @@ function Login() {
               >
                 Sign In
               </Button>
-
-              <div className="text-center text-sm text-gray-600">
-                <p>Don't have an account? <a href="/restaurant/signup" className="text-orange-600 hover:text-orange-700 font-medium">Sign up</a></p>
-              </div>
             </div>
           </div>
         </Card>

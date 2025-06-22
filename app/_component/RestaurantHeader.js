@@ -6,10 +6,22 @@ import Link from "next/link";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "../../components/ui/dialog";
+import { Label } from "../../components/ui/label";
 
 function RestaurantHeader() {
   const randomAvatarUrl = `https://api.dicebear.com/6.x/bottts/svg?seed=${Math.random().toString(5).substring(0)}`;
   const [details, setDetails] = useState();
+  const [open, setOpen] = useState(false);
+  const [editData, setEditData] = useState(null);
   let router = useRouter();
 
   const navigateByimg = () => {
@@ -21,7 +33,9 @@ function RestaurantHeader() {
     if (!data) {
       router.push("/") || router.push("/restaurant");
     } else {
-      setDetails(JSON.parse(data));
+      const parsed = JSON.parse(data);
+      setDetails(parsed);
+      setEditData(parsed?.result ? { ...parsed.result } : {});
       router.push("/restaurant/dashboard");
     }
   }, []);
@@ -32,30 +46,90 @@ function RestaurantHeader() {
           <Link href="/" className="text-2xl font-bold text-orange-500 flex-shrink-0">
             FoodieExpress
           </Link>
-          <div className="flex w-full md:w-1/3 items-center gap-2">
-            <Input
-              type="search"
-              placeholder="Search for food or restaurants"
-              className="rounded-r-none bg-white text-black flex-1 min-w-0"
-            />
-            <Button
-              type="submit"
-              size="icon"
-              className="rounded-l-none bg-[#BF8404] hover:bg-[#9e6c00]"
-            >
-              <Search className="h-4 w-4" />
-              <span className="sr-only">Search</span>
-            </Button>
-          </div>
+        
           <div className="space-x-4 flex items-center">
             {details ? (
               <div className="p-0 md:p-5">
                 <ul className="flex gap-4 md:gap-7 items-center">
                   <li className="mt-[-10px]">
-                    <Avatar>
-                      <AvatarImage src={randomAvatarUrl} />
-                      <AvatarFallback>CN</AvatarFallback>
-                    </Avatar>
+                    <Dialog open={open} onOpenChange={setOpen}>
+                      <DialogTrigger asChild>
+                        <span className="cursor-pointer">
+                          <Avatar>
+                            <AvatarImage src={randomAvatarUrl} />
+                            <AvatarFallback>CN</AvatarFallback>
+                          </Avatar>
+                        </span>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Restaurant Profile</DialogTitle>
+                          <DialogDescription>
+                            View and update your restaurant details below.
+                          </DialogDescription>
+                        </DialogHeader>
+                        {editData && (
+                          <form
+                            className="space-y-4"
+                            onSubmit={e => {
+                              e.preventDefault();
+                              // TODO: Implement update API call
+                              alert("Profile updated! (implement API call)");
+                              setOpen(false);
+                            }}
+                          >
+                            <div>
+                              <Label htmlFor="name">Name</Label>
+                              <Input
+                                id="name"
+                                value={editData.name || ""}
+                                onChange={e => setEditData({ ...editData, name: e.target.value })}
+                                required
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="email">Email</Label>
+                              <Input
+                                id="email"
+                                value={editData.email || ""}
+                                readOnly
+                                className="bg-gray-100 cursor-not-allowed"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="Address">Address</Label>
+                              <Input
+                                id="Address"
+                                value={editData.Address || ""}
+                                onChange={e => setEditData({ ...editData, Address: e.target.value })}
+                                required
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="city">City</Label>
+                              <Input
+                                id="city"
+                                value={editData.city || ""}
+                                onChange={e => setEditData({ ...editData, city: e.target.value })}
+                                required
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="mobile">Mobile</Label>
+                              <Input
+                                id="mobile"
+                                value={editData.mobile || ""}
+                                onChange={e => setEditData({ ...editData, mobile: e.target.value })}
+                                required
+                              />
+                            </div>
+                            <DialogFooter>
+                              <Button type="submit">Update Profile</Button>
+                            </DialogFooter>
+                          </form>
+                        )}
+                      </DialogContent>
+                    </Dialog>
                   </li>
                   <li>
                     <button

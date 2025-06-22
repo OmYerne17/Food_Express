@@ -8,6 +8,16 @@ import Link from "next/link"
 import { Button } from "../../components/ui/button"
 import { Input } from "../../components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "../../components/ui/dialog"
+import { Label } from "../../components/ui/label"
 
 
 function UserDashHeader({ onSearch }) {
@@ -18,6 +28,8 @@ function UserDashHeader({ onSearch }) {
   const router = useRouter()
   const [locations, SetLocations] = useState([])
   const [AvatarUrl, SetAvatar] = useState()
+  const [open, setOpen] = useState(false)
+  const [editData, setEditData] = useState(null)
 
   const avatar = () => {
     const randomAvatarUrl = `https://api.dicebear.com/6.x/bottts/svg?seed=${Math.random().toString(5).substring(0)}`
@@ -46,7 +58,9 @@ function UserDashHeader({ onSearch }) {
     if (!data) {
       router.push("/user/login")
     } else {
-      setDetails(JSON.parse(data))
+      const parsed = JSON.parse(data);
+      setDetails(parsed)
+      setEditData(parsed ? { ...parsed } : {});
       router.push("/user/dashboard")
       loadlocations();
       avatar()
@@ -99,8 +113,80 @@ function UserDashHeader({ onSearch }) {
                     </span>
                   </button>
                   <Avatar className="h-8 w-8 border-2 border-orange-500">
-                    <AvatarImage src={AvatarUrl} alt="User Avatar" />
-                    <AvatarFallback>U</AvatarFallback>
+                    <Dialog open={open} onOpenChange={setOpen}>
+                      <DialogTrigger asChild>
+                        <span className="cursor-pointer">
+                          <AvatarImage src={AvatarUrl} alt="User Avatar" />
+                          <AvatarFallback>U</AvatarFallback>
+                        </span>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>User Profile</DialogTitle>
+                          <DialogDescription>
+                            View and update your profile details below.
+                          </DialogDescription>
+                        </DialogHeader>
+                        {editData && (
+                          <form
+                            className="space-y-4"
+                            onSubmit={e => {
+                              e.preventDefault();
+                              // TODO: Implement update API call
+                              alert("Profile updated! (implement API call)");
+                              setOpen(false);
+                            }}
+                          >
+                            <div>
+                              <Label htmlFor="name">Name</Label>
+                              <Input
+                                id="name"
+                                value={editData.name || ""}
+                                onChange={e => setEditData({ ...editData, name: e.target.value })}
+                                required
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="email">Email</Label>
+                              <Input
+                                id="email"
+                                value={editData.email || ""}
+                                readOnly
+                                className="bg-gray-100 cursor-not-allowed"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="mobile">Mobile</Label>
+                              <Input
+                                id="mobile"
+                                value={editData.mobile || ""}
+                                onChange={e => setEditData({ ...editData, mobile: e.target.value })}
+                                required
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="address">Address</Label>
+                              <Input
+                                id="address"
+                                value={editData.address || ""}
+                                onChange={e => setEditData({ ...editData, address: e.target.value })}
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="city">City</Label>
+                              <Input
+                                id="city"
+                                value={editData.city || ""}
+                                onChange={e => setEditData({ ...editData, city: e.target.value })}
+                              />
+                            </div>
+                            <DialogFooter>
+                              <Button type="submit">Update Profile</Button>
+                            </DialogFooter>
+                          </form>
+                        )}
+                      </DialogContent>
+                    </Dialog>
                   </Avatar>
                   <button
                     onClick={handleSignOut}
@@ -144,7 +230,7 @@ function UserDashHeader({ onSearch }) {
                 <SelectValue placeholder="Select Location" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Locations</SelectItem>
+                <SelectItem value="all">Locations</SelectItem>
                 {Array.isArray(locations) && locations.map((item, key) => (
                   <SelectItem key={key} value={item}>
                     {item}

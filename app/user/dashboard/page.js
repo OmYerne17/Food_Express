@@ -22,7 +22,6 @@ import { useEffect } from "react"
 
 function Page() {
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [filteredItems, setFilteredItems] = React.useState([]);
   const [cartItems, setCartItems] = React.useState([]);
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
@@ -32,13 +31,8 @@ function Page() {
 
   const items = ["Pizza", "Burger", "Sushi", "Pasta", "Salad"];
 
-  const handleSearch = (query) => {
-    if (typeof query !== "string") return;
+  const handleSearch = ({ query }) => {
     setSearchQuery(query);
-    const filtered = items.filter(item =>
-      item.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredItems(filtered);
   };
 
   const handleAddToCart = (item) => {
@@ -71,7 +65,7 @@ function Page() {
 
   const orderFood = async (food) => {
     console.log(food)
-    const response = await fetch("http://localhost:3000/api/orders", {
+    const response = await fetch("/api/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -97,12 +91,12 @@ function Page() {
           <div className="space-y-8">
             <section>
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Best For Taste</h2>
-              <FoodCard onAddToCart={handleAddToCart} onOrder={orderFood} />
+              <FoodCard onAddToCart={handleAddToCart} onOrder={orderFood} searchQuery={searchQuery} />
             </section>
 
             <section>
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Popular Restaurants</h2>
-              <RestaurantList />
+              <RestaurantList searchQuery={searchQuery} />
             </section>
           </div>
         </div>

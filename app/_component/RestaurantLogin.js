@@ -20,7 +20,7 @@ function Login() {
     }else{
       setError(false);
     }
-    let result = await fetch("http://localhost:3000/api/restaurant",{
+    let result = await fetch("/api/restaurant",{
       method:"POST",
       headers:{
         "Content-Type":"application/json"

@@ -6,10 +6,26 @@ import { useToast } from "../../../hooks/use-toast";
 import { Toaster } from "../../../components/ui/toaster";
 import { Button } from "../../../components/ui/button";
 
+// Razorpay script loader
+function loadRazorpayScript() {
+    return new Promise((resolve) => {
+        if (document.getElementById('razorpay-script')) {
+            return resolve(true);
+        }
+        const script = document.createElement('script');
+        script.id = 'razorpay-script';
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+    });
+}
+
 function CartPage() {
     const [cartItems, setCartItems] = useState([]);
     const router = useRouter();
     const { toast } = useToast();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         // Load cart items from localStorage when component mounts
@@ -43,7 +59,7 @@ function CartPage() {
         localStorage.setItem('cartItems', JSON.stringify(updatedCart));
     };
 
-    const handleOrder = async () => {
+    const handleRazorpayPayment = async () => {
         if (cartItems.length === 0) {
             toast({
                 title: "Cart is empty",
@@ -52,7 +68,6 @@ function CartPage() {
             });
             return;
         }
-
         const userData = localStorage.getItem("User");
         if (!userData) {
             toast({
@@ -63,48 +78,74 @@ function CartPage() {
             router.push('/login');
             return;
         }
-
+        setLoading(true);
         const user = JSON.parse(userData);
-
-        try {
-            const response = await fetch("/api/orders", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ 
-                    items: cartItems,
-                    deliveryAddress: "Your Delivery Address", // Replace with actual address handling
-                    userId: user._id
-                }),
-            });
-
-            const result = await response.json();
-            
-            if (result.success) {
-                toast({
-                    title: "Order placed successfully!",
-                    description: "You can track your order in the orders section.",
-                });
-                
-                localStorage.removeItem("cartItems"); // Clear cart after order
-                setCartItems([]); // Clear state
-                router.push('/user/orders'); // Redirect to orders page
-            } else {
-                toast({
-                    title: "Failed to place order",
-                    description: "Please try again later.",
-                    variant: "destructive",
-                });
-            }
-        } catch (error) {
-            console.error('Error placing order:', error);
-            toast({
-                title: "Error",
-                description: "Something went wrong. Please try again.",
-                variant: "destructive",
-            });
+        const totalAmount = calculateTotal() + 45; // Including delivery and platform fee
+        // 1. Load Razorpay script
+        const scriptLoaded = await loadRazorpayScript();
+        if (!scriptLoaded) {
+            toast({ title: "Razorpay SDK failed to load." });
+            setLoading(false);
+            return;
         }
+        // 2. Create order on backend
+        const orderRes = await fetch('/api/create-payment-intent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: totalAmount, currency: 'INR', receipt: `rcpt_${Date.now()}` })
+        });
+        const orderData = await orderRes.json();
+        if (!orderData.orderId) {
+            toast({ title: "Failed to create payment order." });
+            setLoading(false);
+            return;
+        }
+        // 3. Open Razorpay checkout
+        const options = {
+            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+            amount: orderData.amount,
+            currency: orderData.currency,
+            name: "Foodie Express",
+            description: "Food Order Payment",
+            order_id: orderData.orderId,
+            handler: async function (response) {
+                // 4. Verify payment on backend
+                const verifyRes = await fetch('/api/verify-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature,
+                        items: cartItems,
+                        deliveryAddress: "Your Delivery Address", // Replace with actual address
+                        userId: user._id,
+                        total: totalAmount
+                    })
+                });
+                const verifyData = await verifyRes.json();
+                if (verifyData.success) {
+                    toast({ title: "Payment successful!", description: "Order placed." });
+                    localStorage.removeItem("cartItems");
+                    setCartItems([]);
+                    router.push('/user/orders/confirmation');
+                } else {
+                    toast({ title: "Payment verification failed", variant: "destructive" });
+                }
+            },
+            prefill: {
+                name: user.name || "User",
+                email: user.email || "",
+                contact: user.phone || ""
+            },
+            theme: { color: "#ff6600" }
+        };
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (response) {
+            toast({ title: "Payment failed", description: response.error.description, variant: "destructive" });
+        });
+        rzp.open();
+        setLoading(false);
     };
 
     const calculateTotal = () => {
@@ -232,10 +273,11 @@ function CartPage() {
                                 </div>
 
                                 <button
-                                    onClick={handleOrder}
+                                    onClick={handleRazorpayPayment}
                                     className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition-colors font-semibold"
+                                    disabled={loading}
                                 >
-                                    Place Order
+                                    {loading ? "Processing..." : "Pay Now"}
                                 </button>
                             </div>
                         </div>

@@ -54,18 +54,23 @@ function UserDashHeader({ onSearch }) {
   };
 
   useEffect(() => {
-    const data = localStorage.getItem("User")
+    const data = localStorage.getItem("User");
     if (!data) {
-      router.push("/user/login")
+      router.push("/user/login");
     } else {
-      const parsed = JSON.parse(data);
-      setDetails(parsed)
-      setEditData(parsed ? { ...parsed } : {});
-      router.push("/user/dashboard")
-      loadlocations();
-      avatar()
+      try {
+        const parsed = JSON.parse(data);
+        setDetails(parsed);
+        setEditData(parsed ? { ...parsed } : {});
+        router.push("/user/dashboard");
+        loadlocations();
+        avatar();
+      } catch (e) {
+        localStorage.removeItem("User");
+        router.push("/user/login");
+      }
     }
-  }, [router])
+  }, [router]);
 
   const handleSearch = (event) => {
     const query = event.target.value

@@ -42,12 +42,12 @@ export function SignupForm({
         const errorData = await response.json()
         throw new Error(errorData.message || "Network response was not ok")
       }
-
+      
       const result = await response.json()
       if (result.success) {
         alert("Successfully Signed Up")
-        localStorage.setItem("User", JSON.stringify(result.result))
-        router.push("/user/login")
+        localStorage.setItem("User", JSON.stringify(result.user || result.result))
+        router.push("/user/dashboard")
       } else {
         alert(result.message)
       }

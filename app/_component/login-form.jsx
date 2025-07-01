@@ -89,7 +89,7 @@ export function LoginForm() {
         Don't have an account?{" "}
         <Button
           variant="link"
-          onClick={() => router.push("/signup")}
+          onClick={() => router.push("/user/signup")}
           className="p-0"
         >
           Sign up

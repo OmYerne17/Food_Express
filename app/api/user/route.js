@@ -35,16 +35,21 @@ export async function POST(request) {
       useUnifiedTopology: true,
     });
 
-    // Verify user credentials
-    const existingUser = await UserModel.findOne({ email: payload.email, password: payload.password });
-    if (!existingUser) {
-      return NextResponse.json({ success: false, message: "Invalid email or password" }, { status: 400 });
+    // Check if user already exists
+    const existingUser = await UserModel.findOne({ email: payload.email });
+    if (existingUser) {
+      return NextResponse.json({ success: false, message: "User already exists" }, { status: 400 });
     }
 
-    // If user exists, return success
-    return NextResponse.json({ success: true, result: existingUser });
+    // Create new user
+    const newUser = new UserModel(payload);
+    await newUser.save();
+
+    // Return the created user (omit password in response for security)
+    const { password, ...userWithoutPassword } = newUser.toObject();
+    return NextResponse.json({ success: true, user: userWithoutPassword });
   } catch (error) {
-    console.error("Error during login:", error);
+    console.error("Error during signup:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
